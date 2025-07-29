@@ -1,0 +1,21 @@
+.category-title {
+  font-family: var(--main-font);
+  font-size: 32px;
+  font-weight: bold;
+  margin: 20px 20px 20px 0 ;
+}
+
+.emptyText {
+  font-size: 32px;
+  margin: 24px 0;
+  font-weight: 700;
+  text-align: center;
+}
+
+.categoryContainer {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  justify-content: center;
+  gap: 48px;
+  padding: 20px 0;
+}

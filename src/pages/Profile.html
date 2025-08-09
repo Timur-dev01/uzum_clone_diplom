@@ -1,1 +1,80 @@
-<h1>profile</h1>
+<div class="container">
+  <div class="profile-content">
+    <div class="profile-body">
+      <aside class="aside">
+        <!-- <div class="aside-item">
+          <div class="aside-item-text">Заказы</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item-text">Отзывы</div>
+        </div> -->
+        <div class="aside-item">
+          <div class="aside-item-text">Профиль</div>
+        </div>
+      </aside>
+      <article class="article">
+        <form action="" class="profile-form">
+          <header class="profile-form_header">
+            <p class="profile-form_header_text">Мои данные</p>
+          </header>
+          <div class="profile-form_body">
+            <fieldset class="profile-form_fieldset">
+              <div class="fieldset-item">
+                <label for="surname" class="input-label">Фамилия <span>*</span></label>
+                <div class="input-container">
+                  <input type="text" name="surname" required>
+                </div>
+              </div>
+              <div class="fieldset-item">
+                <label for="name" class="input-label">Имя <span>*</span></label>
+                <div class="input-container">
+                  <input type="text" name="name" required>
+                </div>
+              </div>
+              <div class="fieldset-item">
+                <label for="middlename" class="input-label">Отчество</label>
+                <div class="input-container">
+                  <input type="text" name="middlename">
+                </div>
+              </div>
+            </fieldset>
+            <fieldset class="profile-form_fieldset">
+              <div class="fieldset-item">
+                <label for="date" class="input-label">Дата рождения</label>
+                <div class="input-container">
+                  <input type="date" name="datetime">
+                </div>
+              </div>
+              <div class="fieldset-item">
+                <label for="gender" class="input-label">Пол</label>
+                <div class="genders-button">
+                  <button type="button" data-gender="man" class="gender-button">Мужской</button>
+                  <button type="button" data-gender="woman" class="gender-button">Женский</button>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset class="profile-form_fieldset">
+              <div class="fieldset-item">
+                <label for="email" class="input-label">Электронная почта</label>
+                <div class="input-container">
+                  <input type="email" name="email">
+                </div>
+              </div>
+              <div class="fieldset-item">
+                <label for="" class="input-label">Номер телефона<span>*</span></label>
+                <div class="input-container number-phone">
+                  <div class="country-code">+998</div>
+                  <input type="tel" name="tel" id="user-tel" required>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+          <footer class="profile-form_footer">
+            <button type="button" class="btn btn-exit">Выйти из системы</button>
+            <button type="button" class="btn btn-save">Сохранить</button>
+          </footer>
+        </form>
+      </article>
+    </div>
+  </div>
+</div>

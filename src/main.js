@@ -1,6 +1,5 @@
 import axios from "axios";
 import { renderHeader } from "./components/Header.js";
-import { ProductInfo } from "./scripts/ProductInfo.js";
 
 const pages = [
   {
@@ -88,6 +87,15 @@ const pages = [
 ];
 function getPath() {
   return window.location.pathname;
+}
+
+
+async function loadNotFoundPage(app) {
+    const response = await axios.get('/src/pages/404.html');
+    await import('../src/styles/404.css');
+
+    app.innerHTML = response.data;
+    renderHeader()
 }
 
 window.addEventListener("popstate", router);

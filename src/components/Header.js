@@ -1,36 +1,89 @@
-import axios from "axios";
 import { getGoods } from "../utils/getGoods.js";
 import { router } from "../main.js";
+import { createModal } from "../components/Modal.js";
+import { getUsers } from "../utils/getUsers.js";
 
 function Header() {
-  // ===== Header =====
-  const header = document.createElement("header");
   const body = document.body;
-  // ===== Logo =====
+  const header = document.createElement("header");
   const logo = document.createElement("a");
-  logo.href = "/";
   const logoImg = document.createElement("img");
+  const catalog = document.createElement("button");
+  const categoryBlock = document.createElement("div");
+  const categoryDiv = document.createElement("div");
+  const categoryTitle = document.createElement("p");
+  const searchDiv = document.createElement("div");
+  const searchInput = document.createElement("input");
+  const searchIconDiv = document.createElement("div");
+  const searchIcon = document.createElement("img");
+  const searchResultsBlock = document.createElement("div");
+  const menu = document.createElement("nav");
+  const user = document.createElement("a");
+  const userLinkText = document.createElement("a");
+  const userIcons = document.createElement("img");
+  const favorite = document.createElement("a");
+  const favoriteLinkText = document.createElement("a");
+  const favoriteIcons = document.createElement("img");
+  const basket = document.createElement("a");
+  const basketLinkText = document.createElement("a");
+  const basketIcons = document.createElement("img");
+  const basketCounter = document.createElement("span");
+
+  header.className = "header";
+  logo.href = "/";
   logoImg.src = "/images/logo.svg";
   logoImg.alt = "Логотип";
   logoImg.style.width = "215px";
-  logo.append(logoImg);
-
-  // ===== Catalog =====
-  const catalog = document.createElement("button");
   catalog.classList.add("catalog");
   catalog.textContent = "Каталог";
-
-  const categoryBlock = document.createElement("div");
   categoryBlock.classList.add("category_block");
-
-  const categoryDiv = document.createElement("div");
   categoryDiv.className = "categoryDiv";
-
-  const categoryTitle = document.createElement("p");
   categoryTitle.className = "categoryTitle";
   categoryTitle.textContent = "Категории товаров";
+  searchDiv.classList.add("searchDiv");
+  searchInput.type = "search";
+  searchInput.placeholder = "Искать товары";
+  searchIconDiv.classList.add("searchIconDiv");
+  searchIcon.src = "/icons/search.svg";
+  searchIcon.alt = "Поиск";
+  searchIcon.classList.add("searchIcon");
+  searchResultsBlock.classList.add("search_results");
+  menu.classList.add("menu");
+  user.classList.add("menu_link");
+  userLinkText.className = "menu_link_text";
+  userLinkText.textContent = "Профиль";
+  userIcons.src = "/icons/contact.svg";
+  userIcons.alt = "Профиль";
+  userIcons.style.width = "20px";
+  favorite.classList.add("menu_link");
+  favorite.href = "/favorite";
+  favoriteLinkText.className = "menu_link_text";
+  favoriteLinkText.textContent = "Избранное";
+  favoriteIcons.src = "/icons/heart2.svg";
+  favoriteIcons.alt = "Избранное";
+  favoriteIcons.style.width = "20px";
+  basket.className = "menu_link basket_link";
+  basket.href = "/basket";
+  basketLinkText.className = "menu_link_text";
+  basketLinkText.textContent = "Корзина";
+  basketIcons.src = "/icons/backet2.svg";
+  basketIcons.alt = "Корзина";
+  basketIcons.style.width = "20px";
+  basketCounter.className = "basket_counter";
+  basketCounter.textContent = "0";
 
+  logo.append(logoImg);
   categoryDiv.append(categoryTitle);
+  categoryBlock.append(categoryDiv);
+  searchIconDiv.append(searchIcon);
+  searchDiv.append(searchInput, searchIconDiv, searchResultsBlock);
+  user.prepend(userIcons, userLinkText);
+  favorite.prepend(favoriteIcons, favoriteLinkText);
+  basket.prepend(basketIcons, basketLinkText);
+  basket.append(basketCounter);
+  menu.append(user, favorite, basket);
+  header.append(logo, catalog, searchDiv, menu);
+  body.append(categoryBlock);
 
   const TypesTranslate = {
     TV: "Телевизоры",
@@ -42,39 +95,32 @@ function Header() {
 
   async function loadCategories() {
     try {
-      let database = localStorage.getItem("cachedCategories");
+      const goods = await getGoods();
+      localStorage.setItem("cachedCategories", JSON.stringify(goods));
 
-      if (!database) {
-        const db = await getGoods();
-        localStorage.setItem("cachedCategories", JSON.stringify(db));
-        database = JSON.stringify(db);
-      }
-
-      database = JSON.parse(database);
-
-      if (!Array.isArray(database)) {
-        if (Array.isArray(database.goods)) {
-          database = database.goods;
-        } else {
-          database = Object.values(database);
-        }
-      }
-
-      const goods = database;
       const allTypes = goods.map((item) => item.type);
       const types = [...new Set(allTypes)];
 
+      categoryDiv.innerHTML = "";
+      const categoryTitle = document.createElement("p");
+      categoryTitle.className = "categoryTitle";
+      categoryTitle.textContent = "Категории товаров";
+      categoryDiv.append(categoryTitle);
+
       types.forEach((type) => {
+        const count = goods.filter((item) => item.type === type).length;
         const p = document.createElement("p");
         p.className = "categoryName";
         p.textContent = TypesTranslate[type] || type;
         p.dataset.type = type;
-
+        const categoryCount = document.createElement("span");
+        categoryCount.className = "categoryCount";
+        categoryCount.textContent = `Кол.товара: ${count}`;
+        p.append(categoryCount);
         p.addEventListener("click", () => {
           window.history.pushState({}, "", `/category#type=${type}`);
           router();
         });
-
         categoryDiv.append(p);
       });
     } catch (error) {
@@ -83,12 +129,9 @@ function Header() {
   }
 
   loadCategories();
-  categoryBlock.append(categoryDiv);
-  body.append(categoryBlock);
 
   catalog.addEventListener("click", () => {
     const isOpen = categoryBlock.classList.contains("show");
-
     if (isOpen) {
       categoryBlock.classList.remove("show");
       body.classList.remove("no-scroll");
@@ -105,28 +148,8 @@ function Header() {
     body.classList.remove("no-scroll");
   });
 
-  // ===== Search =====
-  const searchDiv = document.createElement("div");
-  searchDiv.classList.add("searchDiv");
-
-  const searchInput = document.createElement("input");
-  searchInput.type = "search";
-  searchInput.placeholder = "Искать товары";
-
-  const searchIconDiv = document.createElement("div");
-  searchIconDiv.classList.add("searchIconDiv");
-  const searchIcon = document.createElement("img");
-  searchIcon.src = "/icons/search.svg";
-  searchIcon.alt = "Поиск";
-  searchIcon.classList.add("searchIcon");
-  searchIconDiv.append(searchIcon);
-
-  const searchResultsBlock = document.createElement("div");
-  searchResultsBlock.classList.add("search_results");
-
   searchInput.addEventListener("input", async () => {
     const query = searchInput.value.trim().toLowerCase();
-
     if (!query) {
       searchResultsBlock.classList.remove("show");
       body.classList.remove("no-scroll");
@@ -140,7 +163,6 @@ function Header() {
     );
 
     searchResultsBlock.innerHTML = "";
-
     if (filteredGoods.length === 0) {
       const noResult = document.createElement("div");
       noResult.classList.add("search_result_item");
@@ -169,60 +191,14 @@ function Header() {
     }
   });
 
-  searchDiv.append(searchInput, searchIconDiv, searchResultsBlock);
-
-  // ===== Menu =====
-  const menu = document.createElement("nav");
-  menu.classList.add("menu");
-
-  const user = document.createElement("a");
-  user.classList.add("menu_link");
-  user.textContent = "Профиль";
-  const userIcons = document.createElement("img");
-  userIcons.src = "/icons/contact.svg";
-  userIcons.alt = "Профиль";
-  userIcons.style.width = "20px";
-  user.prepend(userIcons);
-
-  const favorite = document.createElement("a");
-  favorite.classList.add("menu_link");
-  favorite.href = "/favorite";
-  favorite.textContent = "Избранное";
-  const favoriteIcons = document.createElement("img");
-  favoriteIcons.src = "/icons/heart2.svg";
-  favoriteIcons.alt = "Избранное";
-  favoriteIcons.style.width = "20px";
-  favorite.prepend(favoriteIcons);
-
-  const basket = document.createElement("a");
-  basket.classList.add("menu_link");
-  basket.href = "/basket";
-  basket.textContent = "Корзина";
-  const basketIcons = document.createElement("img");
-  basketIcons.src = "/icons/backet2.svg";
-  basketIcons.alt = "Корзина";
-  basketIcons.style.width = "20px";
-
-  const basketCounter = document.createElement("span");
-  basketCounter.classList.add("basket_counter");
-  basketCounter.textContent = "0";
-
-  basket.prepend(basketIcons);
-  basket.append(basketCounter);
-
-  menu.append(user, favorite, basket);
-
-  header.append(logo, catalog, searchDiv, menu);
-
-  function updateBasketCounter() {
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    const totalCount = cart.reduce(
-      (acc, item) => acc + (item.quantity || 1),
-      0
-    );
-    basketCounter.textContent = totalCount.toString();
-  }
-  updateBasketCounter();
+  user.addEventListener("click", () => {
+    const phone = localStorage.getItem("currentUserPhone");
+    if (phone) {
+      window.location.href = "/profile";
+    } else {
+      createModal();
+    }
+  });
 
   return header;
 }
@@ -230,15 +206,20 @@ function Header() {
 export function renderHeader() {
   const container = document.querySelector(".main_container");
   if (container.querySelector("header")) return;
+
   const header = Header();
   container.prepend(header);
-  // ===== For up button =====
+  updateBasketCounter();
+
   const for_up = document.createElement("button");
-  for_up.className = "for_up";
   const for_up_image = document.createElement("img");
+
+  for_up.className = "for_up";
   for_up_image.setAttribute("src", "/icons/up.svg");
+
   for_up.append(for_up_image);
   container.append(for_up);
+
   window.addEventListener("scroll", () => {
     if (window.scrollY > 300) {
       for_up.style.display = "flex";
@@ -246,7 +227,19 @@ export function renderHeader() {
       for_up.style.display = "none";
     }
   });
+
   for_up.addEventListener("click", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
+
+export const updateBasketCounter = () => {
+  const basketCounter = document.querySelector(".basket_counter");
+  const cards = JSON.parse(localStorage.getItem("card")) || [];
+  const totalCount = cards.reduce((acc, item) => acc + item.amount, 0);
+
+  if (basketCounter) {
+    basketCounter.textContent = totalCount > 50 ? "50+" : totalCount;
+    basketCounter.style.display = totalCount === 0 ? "none" : "flex";
+  }
+};

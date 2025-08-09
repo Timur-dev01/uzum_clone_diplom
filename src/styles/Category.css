@@ -2,20 +2,37 @@
   font-family: var(--main-font);
   font-size: 32px;
   font-weight: bold;
-  margin: 20px 20px 20px 0 ;
+  margin: 20px 20px 20px 0;
 }
 
 .emptyText {
+  font-family: var(--main-font);
   font-size: 32px;
-  margin: 24px 0;
+  margin: 50px 0;
   font-weight: 700;
   text-align: center;
+  color: #000;
 }
 
-.categoryContainer {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  justify-content: center;
-  gap: 48px;
-  padding: 20px 0;
+/*992, 768, 576*/
+
+@media (max-width: 992px) {
+  .emptyText,
+  .category-title {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .emptyText,
+  .category-title {
+    font-size: 26px;
+  }
+}
+
+@media (max-width: 576px) {
+  .emptyText,
+  .category-title {
+    font-size: 24px;
+  }
 }

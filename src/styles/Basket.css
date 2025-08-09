@@ -1,21 +1,5 @@
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-}
-
-:root {
-  --main-font: "Roboto", sans-serif;
-  scroll-behavior: smooth;
-}
-
-.container {
-  max-width: 1340px;
-  margin: 0 auto;
-}
-
 .basket_div {
-  margin: 280px auto 0;
+  margin: 200px auto 0;
   width: 545px;
   display: flex;
   align-items: center;
@@ -29,8 +13,8 @@
 }
 
 .basket_div_for_img img {
-  width: 134px;
-  height: 134px;
+  width: 100%;
+  height: 100%;
 }
 
 .basket_h1 {
@@ -58,13 +42,14 @@
 }
 
 .basket_products_div {
-  display: flex;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  align-items: start;
   gap: 17px;
 }
 
 .basket_products {
-  width: 900px;
-  height: 650px;
+  max-height: 650px;
   border: 1px solid #d9d9d9;
   border-radius: 10px;
   padding: 0 30px;
@@ -72,18 +57,19 @@
   flex-direction: column;
   overflow-y: auto;
   scroll-behavior: smooth;
-  scrollbar-width: none; /* Firefox */
+  /* scrollbar-width: none; Firefox */
   -ms-overflow-style: none;
 }
 
-.basket_products_img{
+.basket_products_img {
   width: 143px;
-  height: 187px;
+  height: 143px;
 }
 
-.basket_products_img img{
-  width: 134px;
-  height: 187px;
+.basket_products_img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .basket_products::-webkit-scrollbar {
@@ -91,7 +77,6 @@
 }
 
 .basket_products_price {
-  width: 418px;
   height: 265px;
   border: 1px solid #d9d9d9;
   border-radius: 10px;
@@ -130,7 +115,7 @@
   vertical-align: middle;
   color: #ffffff;
   margin-top: 30px;
-  transition: .7s;
+  transition: 0.7s;
   cursor: pointer;
 }
 
@@ -141,13 +126,11 @@
 }
 
 .basket_product {
-  width: 730px;
   border: none;
   margin: 10px 0 10px;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
   align-items: center;
-  flex-direction: row;
-  gap: 30px;
 }
 
 .productTitle {
@@ -199,11 +182,24 @@
   margin-bottom: 25px;
   border: none;
   cursor: pointer;
-  transition: .7s;
+  transition: 0.7s;
 }
 
 .buttonDelete:hover {
   border: 1px solid #3333cc;
   background-color: #ffffff;
   color: #3333cc;
+}
+
+/*1200, 992, 768, 576*/
+@media (max-width: 1200px) {
+}
+
+@media (max-width: 992px) {
+}
+
+@media (max-width: 768px) {
+}
+
+@media (max-width: 576px) {
 }

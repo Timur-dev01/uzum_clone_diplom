@@ -2,9 +2,12 @@ import { createProductCard } from "../components/Card.js";
 import { getGoods } from "../utils/getGoods.js";
 
 export default async function CategoryPage() {
-  const section = document.querySelector(".categoryPage");
-  const container = document.querySelector(".categoryContainer");
+  document.body.classList.remove("no-scroll");
+  document.documentElement.classList.remove("no-scroll");
 
+  const section = document.querySelector(".categoryPage");
+  const container = document.querySelector(".product-container");
+  const title = document.createElement("h1");
   const hash = window.location.hash;
   const query = new URLSearchParams(hash.slice(1));
   const type = query.get("type");
@@ -17,19 +20,19 @@ export default async function CategoryPage() {
     audio: "Аудио",
   };
 
-  container.innerHTML = ""; 
+  title.className = "category-title";
+  title.textContent = TypesTranslate[type] || type || "Категория не найдена";
+
+  container.innerHTML = "";
   const oldTitle = section.querySelector(".category-title");
   if (oldTitle) oldTitle.remove();
 
   const oldEmpty = section.querySelector(".emptyText");
   if (oldEmpty) oldEmpty.remove();
 
-  const title = document.createElement("h1");
-  title.className = "category-title";
-  title.textContent = TypesTranslate[type] || type || "Категория не найдена";
   section.prepend(title);
 
-  if (!type) return; 
+  if (!type) return;
 
   try {
     const allGoods = await getGoods();
@@ -49,4 +52,3 @@ export default async function CategoryPage() {
     console.error("Ошибка при загрузке товаров:", error);
   }
 }
-

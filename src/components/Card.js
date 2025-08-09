@@ -1,71 +1,41 @@
 import { getGoods } from "../utils/getGoods.js";
-import {
-  isFavorite,
-  toggleFavorite,
-} from "../utils/favorites.js";
+import { has, toggle } from "../utils/favorites.js";
+import { updateBasketCounter } from "../components/Header.js";
 
 export function createProductCard(product) {
   const card = document.createElement("div");
+  const imageContainer = document.createElement("div");
+  const img = document.createElement("img");
+  const heartIcon = document.createElement("div");
+  const title = document.createElement("p");
+  const priceContainer = document.createElement("div");
+  const oldPrice = document.createElement("p");
+  const price = document.createElement("p");
+  const basketDiv = document.createElement("div");
+
   card.className = "product-card";
   card.dataset.id = product.id;
-
-  card.addEventListener("click", () => {
-    window.location.href = `/productInfo?id=${product.id}`;
-  });
-
-  const imageContainer = document.createElement("div");
   imageContainer.className = "product-image";
-
-  const img = document.createElement("img");
   img.src = product.media[0];
   img.alt = product.title;
   img.loading = "lazy";
-  imageContainer.appendChild(img);
-
-  const heartIcon = document.createElement("div");
   heartIcon.className = "heart-icon";
   heartIcon.innerHTML = `
-  <svg class="feather feather-heart" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06
-      a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78
-      1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-  </svg>
-`;
-
-  const path = heartIcon.querySelector("path");
-
-  if (isFavorite(product.id)) {
-    path.classList.add("active");
-  }
-
-  heartIcon.addEventListener("click", (e) => {
-    e.stopPropagation();
-    toggleFavorite(product.id);
-    path.classList.toggle("active");
-  });
-
-  imageContainer.appendChild(heartIcon);
-
-  const title = document.createElement("p");
+    <svg class="feather feather-heart" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06
+        a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78
+        1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+  `;
   title.className = "product-title";
   title.textContent = product.title;
-
-  const priceContainer = document.createElement("div");
   priceContainer.className = "price-container";
-
-  const oldPrice = document.createElement("p");
   oldPrice.className = "product-price-with-discount";
   oldPrice.textContent = `${product.price} сум`;
-
-  const price = document.createElement("p");
   price.className = "product-price";
   price.textContent = `${Math.round(
     product.price - (product.price * product.salePercentage) / 100
   )} сум`;
-
-  priceContainer.append(oldPrice, price);
-
-  const basketDiv = document.createElement("div");
   basketDiv.className = "basket-div";
   basketDiv.innerHTML = `
     <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
@@ -83,8 +53,43 @@ export function createProductCard(product) {
       </g>
     </svg>
   `;
-
+  imageContainer.appendChild(img);
+  imageContainer.appendChild(heartIcon);
+  priceContainer.append(oldPrice, price);
   card.append(imageContainer, title, priceContainer, basketDiv);
+
+  const path = heartIcon.querySelector("path");
+  if (has(product.id)) path.classList.add("active");
+
+  heartIcon.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggle(product.id);
+    path.classList.toggle("active");
+  });
+
+  function handleAddToCard(productId) {
+    const cardItems = JSON.parse(localStorage.getItem("card")) || [];
+    const existingItem = cardItems.find((item) => item.id === productId);
+
+    if (existingItem) {
+      existingItem.amount += 1;
+    } else {
+      cardItems.push({ id: productId, amount: 1 });
+    }
+
+    localStorage.setItem("card", JSON.stringify(cardItems));
+    updateBasketCounter();
+  }
+
+  basketDiv.addEventListener("click", (e) => {
+    e.stopPropagation();
+    handleAddToCard(product.id);
+  });
+
+  card.addEventListener("click", () => {
+    window.location.href = `/productInfo?id=${product.id}`;
+  });
+
   return card;
 }
 
@@ -101,12 +106,12 @@ export function renderProducts(products, targetContainer) {
 }
 
 export async function renderAllProducts() {
-  const popular = document.createElement('h1')
-  popular.textContent = "Популярное"
-  popular.className = "popular"
-  
+  const popular = document.createElement("h1");
+  popular.textContent = "Популярное";
+  popular.className = "popular";
+
   const data = await getGoods();
   const container = document.querySelector(".container");
-  container.append(popular)
+  container.append(popular);
   renderProducts(data, container);
 }

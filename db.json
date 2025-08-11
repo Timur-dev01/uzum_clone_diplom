@@ -949,39 +949,6 @@
       "phoneNumber": "",
       "favorites": [],
       "basketProducts": []
-    },
-    {
-      "id": "bf1b",
-      "phoneNumber": "915151515",
-      "favorites": [],
-      "basketProducts": [],
-      "password": "12345",
-      "orders": [
-        {
-          "id": 1754905915211,
-          "products": [
-            {
-              "id": "27",
-              "title": "Гитара Denn DCG395 N Natural",
-              "description": "Denn DCG395 – акустическая гитара с тонким и прочным корпусом. Подходит для тех, кто только знакомится с основами игры.",
-              "colors": [
-                "orange"
-              ],
-              "rating": 5.5,
-              "price": 4999,
-              "isBlackFriday": false,
-              "salePercentage": 35,
-              "media": [
-                "https://img.mvideo.ru/Big/10028676bb.jpg"
-              ],
-              "type": "audio",
-              "amount": 1
-            }
-          ],
-          "date": "2025-08-11T09:51:55.211Z",
-          "status": "new"
-        }
-      ]
     }
   ]
 }

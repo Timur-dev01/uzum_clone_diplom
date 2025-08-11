@@ -3,7 +3,6 @@ import { router } from "../main.js";
 import { createModal } from "../components/Modal.js";
 import { getUsers } from "../utils/getUsers.js";
 
-// ===== Общие функции =====
 function attachCatalogToggle(button, categoryBlock, body) {
   button.addEventListener("click", () => {
     const isOpen = categoryBlock.classList.contains("show");

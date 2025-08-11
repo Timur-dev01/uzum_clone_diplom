@@ -146,6 +146,7 @@ async function addBasketProducts() {
     plus.addEventListener("click", async (e) => {
       e.preventDefault();
       e.stopPropagation();
+      if (item.amount >= 10) return;
       await handleQuantityChange(item.id, 1);
     });
 

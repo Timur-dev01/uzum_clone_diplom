@@ -31,6 +31,7 @@ function Header() {
 
   header.className = "header";
   logo.href = "/";
+  logo.className = "logo";
   logoImg.src = "/images/logo.svg";
   logoImg.alt = "Логотип";
   logoImg.style.width = "215px";
@@ -220,14 +221,36 @@ export function renderHeader() {
   for_up.append(for_up_image);
   container.append(for_up);
 
-  window.addEventListener("scroll", () => {
-    if (window.scrollY > 300) {
-      for_up.style.display = "flex";
-    } else {
-      for_up.style.display = "none";
+  let scrollHandler = null;
+  function enableForUp() {
+    for_up.style.display = "none";
+    if (!scrollHandler) {
+      scrollHandler = () => {
+        if (window.scrollY > 300) {
+          for_up.style.display = "flex";
+        } else {
+          for_up.style.display = "none";
+        }
+      };
+      window.addEventListener("scroll", scrollHandler);
     }
-  });
-
+  }
+  function disableForUp() {
+    for_up.style.display = "none";
+    if (scrollHandler) {
+      window.removeEventListener("scroll", scrollHandler);
+      scrollHandler = null;
+    }
+  }
+  function checkForUpVisibility() {
+    if (window.innerWidth < 768) {
+      disableForUp();
+    } else {
+      enableForUp();
+    }
+  }
+  checkForUpVisibility();
+  window.addEventListener("resize", checkForUpVisibility);
   for_up.addEventListener("click", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });

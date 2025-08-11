@@ -1,5 +1,6 @@
 import { getUsers } from "../utils/getUsers.js";
 import { createUser } from "../utils/createUser.js";
+import axios from "axios";
 
 export function createModal() {
   const modalWrapper = document.createElement("div");
@@ -15,8 +16,10 @@ export function createModal() {
   const inputWrapper = document.createElement("div");
   const codeDiv = document.createElement("div");
   const input = document.createElement("input");
+
   const submitButton = document.createElement("button");
 
+  // классы
   modalWrapper.className = "modal-wrapper";
   modalDialog.className = "modal-dialog";
   modalContent.className = "modal_content";
@@ -31,7 +34,7 @@ export function createModal() {
           <path d="M53.233 7.23459V9.61992L47.5928 14.6542H53.5727V17.0395H43.8412V14.6542L49.4889 9.61992H44.0617V7.23459H53.233Z" fill="#7000FF"></path>
           <path d="M79.7479 7.04955C77.9583 7.04955 76.6123 7.77706 75.9456 8.88481C75.2662 7.77706 73.7859 7.04955 72.2523 7.04955C69.2357 7.04955 67.6666 8.97099 67.6666 11.3462V17.0395H70.488V11.7467C70.488 10.6111 71.0837 9.61232 72.4525 9.61232C72.7314 9.59458 73.0102 9.63767 73.2713 9.73906C73.5324 9.83792 73.7707 9.99255 73.9659 10.1903C74.1636 10.388 74.3157 10.6263 74.4145 10.8874C74.5134 11.1485 74.5539 11.4273 74.5362 11.7087V17.0421H77.3575V11.7061C77.3575 10.568 78.0267 9.60979 79.3829 9.60979C80.7365 9.60979 81.3905 10.6085 81.3905 11.7442V17.0345H84.2119V11.3513C84.2119 8.9786 82.7543 7.05462 79.7226 7.05462L79.7479 7.04955Z" fill="#7000FF"></path>
           <path d="M36.9844 14.6467C38.2848 14.6467 39.1618 13.9293 39.1618 12.3729L39.1669 7.23718H41.9882V12.4717C41.9882 15.8837 39.1517 17.2196 36.997 17.2196C34.8424 17.2196 31.9982 15.8837 31.9982 12.4717V7.23718H34.8196V12.3729C34.8196 13.942 35.6865 14.6467 36.9844 14.6467Z" fill="#7000FF"></path>
-          </svg>`;
+          </svg>` // твой логотип сюда
 
   closeButton.className = "btn_close-modal";
   closeButton.type = "button";
@@ -41,7 +44,7 @@ export function createModal() {
                 <path fill-rule="evenodd" clip-rule="evenodd"
                   d="M8.28033 7.21967C7.98744 6.92678 7.51256 6.92678 7.21967 7.21967C6.92678 7.51256 6.92678 7.98744 7.21967 8.28033L10.9393 12L7.21967 15.7197C6.92678 16.0126 6.92678 16.4874 7.21967 16.7803C7.51256 17.0732 7.98744 17.0732 8.28033 16.7803L12 13.0607L15.7197 16.7803C16.0126 17.0732 16.4874 17.0732 16.7803 16.7803C17.0732 16.4874 17.0732 16.0126 16.7803 15.7197L13.0607 12L16.7803 8.28033C17.0732 7.98744 17.0732 7.51256 16.7803 7.21967C16.4874 6.92678 16.0126 6.92678 15.7197 7.21967L12 10.9393L8.28033 7.21967Z"
                   fill="#4E5155"></path>
-              </svg>`;
+              </svg>`;;
 
   body.className = "sign-in_body";
   phoneBlock.className = "sign-in_phone";
@@ -61,7 +64,7 @@ export function createModal() {
   input.required = true;
 
   submitButton.className = "btn sign-in_btn";
-  submitButton.type = "submit";
+  submitButton.type = "button"; // чтобы не сабмитило форму сразу
   submitButton.textContent = "Войти";
 
   inputWrapper.append(codeDiv, input);
@@ -77,6 +80,7 @@ export function createModal() {
     document.querySelector(".popups-container") || document.body;
   container.appendChild(modalWrapper);
 
+  // закрытие
   function closeModal(wrapper, modal) {
     modal.classList.add("modal-dialog--hide");
     modal.addEventListener("animationend", () => wrapper.remove(), {
@@ -92,28 +96,71 @@ export function createModal() {
     closeModal(modalWrapper, modalDialog);
   });
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const phone = input.value.trim();
+submitButton.addEventListener("click", async () => {
+  const phone = input.value.trim();
+  const phoneDigits = phone.replace(/\D/g, "");
 
-    try {
-      const users = await getUsers();
-      let user = users.find((u) => u.phoneNumber === phone);
-      const isNewUser = !user;
-      if (!user) {
-        user = await createUser(phone);
+  if (phoneDigits.length !== 9) {
+    showAlert("Введите корректный номер телефона (9 цифр)");
+    inputWrapper.classList.add("invalid");
+    return;
+  }
+  inputWrapper.classList.remove("invalid");
+
+  // Проверка — если поле пароля уже существует, не добавляем ещё раз
+  if (form.querySelector("#login-password")) return;
+
+  try {
+    const users = await getUsers();
+    let user = users.find((u) => u.phoneNumber === phone);
+
+    const inputWrapperTwo = document.createElement("div");
+    inputWrapperTwo.className = "sign-in_input-phone";
+    const passwordInput = document.createElement("input");
+    passwordInput.type = "password";
+    passwordInput.name = "password";
+    passwordInput.id = "login-password";
+    passwordInput.required = true;
+    passwordInput.placeholder = user ? "Введите пароль" : "Создайте пароль";
+    inputWrapperTwo.append(passwordInput);
+    form.insertBefore(inputWrapperTwo, submitButton);
+
+    submitButton.textContent = "Подтвердить";
+
+    submitButton.onclick = async () => {
+      const password = passwordInput.value.trim();
+
+      if (!password) {
+        showAlert("Введите пароль");
+        inputWrapperTwo.classList.add("invalid");
+        return;
       }
-      localStorage.setItem("currentUserPhone", user.phoneNumber);
-      modalAlert(isNewUser);
-      setTimeout(() => {
-        window.location.href = "/profile";
-      }, 1000);
-    } catch (error) {
-      console.error("Ошибка при авторизации:", error);
-    }
-  });
-}
+      inputWrapperTwo.classList.remove("invalid");
 
+      if (!user) {
+        const newUser = await createUser(phone);
+        await axios.patch(`http://localhost:3001/users/${newUser.id}`, {
+          password,
+        });
+        localStorage.setItem("currentUserPhone", newUser.phoneNumber);
+        modalAlert(true);
+        setTimeout(() => (window.location.href = "/profile"), 1000);
+      } else {
+        if (user.password !== password) {
+          showAlert("Неверный пароль");
+          inputWrapperTwo.classList.add("invalid");
+          return;
+        }
+        localStorage.setItem("currentUserPhone", user.phoneNumber);
+        modalAlert(false);
+        setTimeout(() => (window.location.href = "/profile"), 1000);
+      }
+    };
+  } catch (error) {
+    console.error("Ошибка при проверке пользователя:", error);
+  }
+});
+}
 export function modalAlert(isNewUser) {
   const modal = document.createElement("div");
   modal.className = "modalAlert";
@@ -122,20 +169,13 @@ export function modalAlert(isNewUser) {
     : "Вы успешно вошли в свой аккаунт";
 
   document.body.appendChild(modal);
-
-  setTimeout(() => {
-    modal.remove();
-  }, 4000);
+  setTimeout(() => modal.remove(), 4000);
 }
 
 export function showAlert(message) {
   const alert = document.createElement("div");
   alert.className = "modalAlert";
   alert.textContent = message;
-
   document.body.appendChild(alert);
-
-  setTimeout(() => {
-    alert.remove();
-  }, 5000);
+  setTimeout(() => alert.remove(), 5000);
 }

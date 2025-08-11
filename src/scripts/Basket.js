@@ -1,5 +1,12 @@
 import { getGoods } from "../utils/getGoods.js";
 import { updateBasketCounter } from "../components/Header.js";
+import {
+  getProductsFromCard,
+  removeProductFromCard,
+  clearCard,
+  updateBasketQuantity,
+  handleCheckout,
+} from "../utils/basket.js";
 
 const container = document.querySelector(".container");
 
@@ -28,14 +35,6 @@ function defaultBasketDiv() {
   basketDiv.append(basketDivForImg, basket_h1, basket_p, linkInMainPage);
 
   return basketDiv;
-}
-
-function getProductsFromCard() {
-  return JSON.parse(localStorage.getItem("card")) || [];
-}
-
-function saveProductsToCard(data) {
-  localStorage.setItem("card", JSON.stringify(data));
 }
 
 async function addBasketProducts() {
@@ -76,24 +75,24 @@ async function addBasketProducts() {
   section.append(title, wrapper);
   container.append(section);
 
-  checkout.addEventListener("click", () => {
-    localStorage.removeItem("card");
+  checkout.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    await handleCheckout();
+
     updateBasketCounter();
     container.innerHTML = "";
     container.append(defaultBasketDiv());
-    alert("Заказ оформлен");
   });
 
   card.forEach((item) => {
-    const product = data.find((p) => p.id === item.id);
+    const product = data.find((p) => String(p.id) === String(item.id));
     if (!product) return;
 
     const productPrice = Math.ceil(
       product.price - (product.price * product.salePercentage) / 100
     );
-    const discount = Math.ceil(
-      (product.price * product.salePercentage) / 100
-    );
+    const discount = Math.ceil((product.price * product.salePercentage) / 100);
 
     const productEl = document.createElement("div");
     const imgBox = document.createElement("div");
@@ -107,11 +106,10 @@ async function addBasketProducts() {
     const plus = document.createElement("span");
     const delBtn = document.createElement("button");
 
-
     productEl.className = "basket_product";
     productEl.dataset.id = item.id;
     imgBox.className = "basket_products_img";
-    img.src = product.media[0];
+    img.src = product.media && product.media[0] ? product.media[0] : "";
     img.alt = product.title;
     info.className = "basket_products_info";
     titleEl.className = "productTitle";
@@ -127,64 +125,54 @@ async function addBasketProducts() {
     plus.innerHTML = "&#43";
     delBtn.className = "buttonDelete";
     delBtn.textContent = "Удалить";
+    delBtn.type = "button";
 
- 
     imgBox.append(img);
     counterBlock.append(minus, amount, plus);
     info.append(titleEl, priceEl, counterBlock, delBtn);
     productEl.append(imgBox, info);
     productsContainer.append(productEl);
 
-
     titleEl.addEventListener("click", () => {
       window.location.href = `/productInfo?id=${product.id}`;
     });
 
-    minus.addEventListener("click", () =>
-      handleQuantityChange(item.id, -1, productPrice)
-    );
+    minus.addEventListener("click", async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      await handleQuantityChange(item.id, -1);
+    });
 
-    plus.addEventListener("click", () =>
-      handleQuantityChange(item.id, 1, productPrice)
-    );
+    plus.addEventListener("click", async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      await handleQuantityChange(item.id, 1);
+    });
 
-    delBtn.addEventListener("click", () => {
-      const updated = getProductsFromCard().filter((el) => el.id !== item.id);
-      saveProductsToCard(updated);
-      productEl.remove();
+    delBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      await removeProductFromCard(item.id);
       updateBasketCounter();
+      await addBasketProducts();
       updateSummary();
-      if (!updated.length) container.replaceChildren(defaultBasketDiv());
     });
   });
 
   updateSummary();
 }
 
-function handleQuantityChange(productId, delta, pricePerUnit) {
-  const card = getProductsFromCard();
-  const product = card.find((item) => item.id === productId);
-  if (!product) return;
-
-  product.amount += delta;
-
-  if (product.amount < 1) {
-    const updated = card.filter((el) => el.id !== productId);
-    saveProductsToCard(updated);
-    document.querySelector(`[data-id="${productId}"]`)?.remove();
-    if (!updated.length) {
-      container.innerHTML = "";
-      container.append(defaultBasketDiv());
-    }
-  } else if (product.amount <= 10) {
-    saveProductsToCard(card);
-    const amountSpan = document.querySelector(
-      `[data-id="${productId}"] .amount`
-    );
-    if (amountSpan) amountSpan.textContent = product.amount;
-  }
-
+async function handleQuantityChange(productId, delta) {
+  await updateBasketQuantity(productId, delta);
   updateBasketCounter();
+  await addBasketProducts();
+  updateSummary();
+}
+
+async function removeProduct(productId) {
+  removeProductFromCard(productId);
+  updateBasketCounter();
+  await addBasketProducts();
   updateSummary();
 }
 
@@ -196,7 +184,7 @@ function updateSummary() {
       discountSum = 0;
 
     card.forEach((item) => {
-      const product = data.find((p) => p.id === item.id);
+      const product = data.find((p) => String(p.id) === String(item.id));
       if (!product) return;
 
       const productPrice = Math.ceil(
@@ -211,9 +199,14 @@ function updateSummary() {
       discountSum += discount * item.amount;
     });
 
-    document.querySelector(".general_price").textContent = `${sum} сум`;
-    document.querySelector(".total_items").textContent = `Итого товаров: ${count}`;
-    document.querySelector(".total_discounts").textContent = `Итого скидки: ${discountSum} сум`;
+    const priceEl = document.querySelector(".general_price");
+    const totalItemsEl = document.querySelector(".total_items");
+    const discountsEl = document.querySelector(".total_discounts");
+
+    if (priceEl) priceEl.textContent = `${sum} сум`;
+    if (totalItemsEl) totalItemsEl.textContent = `Итого товаров: ${count}`;
+    if (discountsEl)
+      discountsEl.textContent = `Итого скидки: ${discountSum} сум`;
   });
 }
 

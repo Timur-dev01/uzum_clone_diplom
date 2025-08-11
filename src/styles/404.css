@@ -29,45 +29,37 @@
   margin-top: 8px;
 }
 
-.errorLink {
-  font-family: var(--main-font);
-  font-size: 100%;
-  font-style: inherit;
-  color: #1f2026;
-  margin-top: 16px;
-  border: none;
-  border-radius: 12px;
-  min-height: 48px;
-  padding: 10px 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: initial;
-  background-color: rgb(230, 232, 237);
-}
-
-.errorLink:hover, .errorLink:active{
-  background-color: rgb(190, 194, 206);
-}
-
-/*1200, 992, 768, 576*/
-@media (max-width: 1200px) {
-
-  
-}
-
-@media(max-width: 992px) {
-  
-
-}
-
+/*768, 576*/
 @media (max-width: 768px) {
+  .error_div img {
+    width: 120px;
+    height: 120px;
+  }
 
+  .errorTitle{
+    font-size: 20px;
+    line-height: 24px;
+  }
 
+  .errorInfo{
+    font-size: 13px;
+    line-height: 18px;
+  }
 }
 
 @media (max-width: 576px) {
+  .error_div img {
+    width: 100px;
+    height: 100px;
+  }
 
+  .errorTitle{
+    font-size: 20px;
+    line-height: 24px;
+  }
 
+  .errorInfo{
+    font-size: 13px;
+    line-height: 18px;
+  }
 }
-

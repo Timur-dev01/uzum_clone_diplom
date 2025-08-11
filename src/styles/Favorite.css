@@ -76,6 +76,10 @@
 }
 
 @media (max-width: 768px) {
+  .product-container{
+    margin-bottom: 100px;
+  }
+
   .favorite-div {
     width: 380px;
   }

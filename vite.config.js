@@ -1,3 +1,4 @@
+import { profile } from "node:console";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
@@ -13,13 +14,12 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, "index.html"),
-        home: resolve(__dirname, "src/pages/home.html"),
-        signin: resolve(__dirname, "src/pages/signin.html"),
-        signup: resolve(__dirname, "src/pages/signup.html"),
-        wallets: resolve(__dirname, "src/pages/wallets.html"),
-        transaction: resolve(__dirname, "src/pages/transaction.html"),
-        walletadd: resolve(__dirname, "src/pages/walletadd.html"),
-        transactionadd: resolve(__dirname, "src/pages/transactionadd.html"),
+        basket: resolve(__dirname, "src/pages/Basket.html"),
+        category: resolve(__dirname, "src/pages/Category.html"),
+        favorite: resolve(__dirname, "src/pages/Favorite.html"),
+        basic: resolve(__dirname, "src/pages/main.html"),
+        productInfo: resolve(__dirname, "src/pages/ProductInfo.html"),
+        profile: resolve(__dirname, "src/pages/Profile.html"),
       },
     },
   },

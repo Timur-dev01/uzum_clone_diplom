@@ -256,4 +256,8 @@
   .btn {
     width: 100%;
   }
+
+  .btn-save {
+    margin-bottom: 100px;
+  }
 }

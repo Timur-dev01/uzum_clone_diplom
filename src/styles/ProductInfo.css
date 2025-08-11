@@ -356,8 +356,8 @@ img {
 }
 
 @media (max-width: 768px) {
-  .container {
-    background-color: #fff;
+  .product-container{
+    margin-bottom: 60px;
   }
 
   #info_section {
@@ -370,7 +370,8 @@ img {
 
   .oldPrice,
   .btn_favorites,
-  .line {
+  .line,
+  .bottom_header {
     display: none;
   }
 
@@ -489,7 +490,8 @@ img {
 
   .btn_basket {
     width: 50%;
-    height: 90%;
+    height: 100%;
+    padding: 6px 15px;
   }
 
   .heart_info {
@@ -581,17 +583,6 @@ img {
     background-color: #fff;
     min-height: 40px;
     gap: 10px;
-  }
-
-  .button_amount {
-    width: 50%;
-    height: 100%;
-    margin: 0;
-  }
-
-  .btn_basket {
-    width: 50%;
-    height: 90%;
   }
 
   .heart_info {

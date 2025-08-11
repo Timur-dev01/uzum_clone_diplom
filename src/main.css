@@ -796,18 +796,59 @@ body.no-scroll {
   background-color: rgb(190, 194, 206);
 }
 
-.invalid{
+.invalid {
   border: 2px solid red;
 }
 
+.bottom_header {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  border-top: 1px solid #a0a3a9;
+  padding: 15px 0 10px;
+  background-color: #fff;
+  z-index: 100001;
+}
 
+.bottom_menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 5px;
+}
+
+.bottom_menu_link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.bottom_menu_link {
+  font-family: var(--main-font);
+  color: #7e818c;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 12px;
+  letter-spacing: 0.006em;
+}
+
+.bottom_menu_link:hover,
+.bottom_menu_link:active {
+  color: #7f4dff;
+}
+
+.bottom_menu_link:hover svg path,
+.bottom_menu_link:active svg path {
+  fill: #7f4dff;
+}
 
 /*1200, 992, 768, 576*/
 @media (max-width: 1200px) {
   .main_container,
   .container {
     width: 900px;
-    background-color: #f0ac46;
   }
 
   .header {
@@ -918,7 +959,6 @@ body.no-scroll {
   .main_container,
   .container {
     width: 700px;
-    background-color: #8a66ff;
   }
 
   .header {
@@ -1076,7 +1116,6 @@ body.no-scroll {
   .main_container,
   .container {
     width: 500px;
-    background: #7e818c;
   }
 
   .catalog,
@@ -1085,6 +1124,16 @@ body.no-scroll {
   .banner-carousel__btn,
   .banner-carousel__dots {
     display: none;
+  }
+
+  .category_block.show{
+    height: 100%;
+    max-height: 100%;
+    top: 60px;
+  }
+
+  .categoryDiv{
+    padding-left: 120px;
   }
 
   .searchDiv {
@@ -1187,17 +1236,34 @@ body.no-scroll {
     width: 22px;
     height: 22px;
   }
+
+  .bottom_header {
+    width: 500px;
+    left: 50%;
+    transform: translateX(-50%)
+  }
 }
 
 @media (max-width: 576px) {
-  .main_container,
   .container {
     width: 100%;
     padding: 0 20px;
-    background-color: #fff;
   }
 
-  .search_results.show{
+  .main_container{
+    width: 100%;
+  }
+
+  .categoryDiv{
+    padding-left: 0;
+  }
+
+
+  .bottom_header {
+    width: 100%;
+  }
+
+  .search_results.show {
     top: 77px;
   }
 

@@ -119,14 +119,7 @@ function Header(container) {
 
   async function loadCategories() {
     try {
-      // Загружаем напрямую из корня
-      const res = await fetch("/db.json");
-      if (!res.ok) {
-        throw new Error(`Ошибка загрузки: ${res.status}`);
-      }
-      const data = await res.json();
-      const goods = data.goods; // если внутри db.json есть { "goods": [...] }
-
+      const goods = await getGoods();
       localStorage.setItem("cachedCategories", JSON.stringify(goods));
 
       const allTypes = goods.map((item) => item.type);
@@ -280,6 +273,7 @@ function Header(container) {
         </g>
         </svg> 
         Корзина`;
+        
 
         const favBottomHeader = document.createElement("a");
         favBottomHeader.className = "bottom_menu_link";
